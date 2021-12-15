@@ -19,7 +19,7 @@ class CreateBarang extends Migration
             $table->integer('harga');
             $table->integer('qty');
             $table->string('satuan');
-            $table->text('gambar');
+            $table->text('gambar')->nullable();
             $table->timestamps();
         });
     }

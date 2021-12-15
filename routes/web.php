@@ -34,21 +34,29 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('admin.dashboard');
-});
-
 
 Route::get('/admin', function () {
     return view('admin.dashboard');
 });
 
-Route::get('/admin/admin', function () {
-    return view('admin.admin');
-});
+Route::group(['prefix' => 'admin'], function () {
 
-Route::get('/admin/barang', function () {
-    return view('admin.barang');
+    Route::get('/', function () {
+        return view('admin.dashboard');
+    });
+
+    Route::group(['prefix' => 'admin'], function () {
+        Route::match(['post', 'get'], '/', [\App\Http\Controllers\AdminController::class, 'index']);
+        Route::post('/patch', [\App\Http\Controllers\AdminController::class, 'patch']);
+        Route::post('/delete', [\App\Http\Controllers\AdminController::class, 'hapus']);
+    });
+
+    Route::group(['prefix' => 'barang'], function () {
+        Route::match(['post', 'get'], '/', [\App\Http\Controllers\BarangController::class, 'index']);
+        Route::post('/patch', [\App\Http\Controllers\BarangController::class, 'patch']);
+        Route::post('/delete', [\App\Http\Controllers\BarangController::class, 'hapus']);
+    });
+
 });
 
 Route::get('/admin/transaksi', function () {
@@ -81,6 +89,6 @@ Route::prefix('laporanpemasukan')->group(
 Route::get('a/dmin/laporantransaksi/cetak', [LaporanController::class, 'cetakLaporanTransaksi']);
 Route::get('/admin/laporanpemasukan/cetak', [LaporanController::class, 'cetakLaporanPemasukan']);
 
-Route::post('/login', [AuthController::class, 'login']);
-Route::get('/logout', [AuthController::class, 'logout']);
+Route::match(['get', 'post'], '/', [AuthController::class, 'login'])->middleware('guest');
+Route::get('/logout', [AuthController::class, 'logout'])->middleware('web');
 Route::post('/register-member', [AuthController::class, 'registerMember']);
