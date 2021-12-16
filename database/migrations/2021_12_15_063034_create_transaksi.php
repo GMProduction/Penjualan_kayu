@@ -25,7 +25,7 @@ class CreateTransaksi extends Migration
             $table->text('alamat');
             $table->smallInteger('status_transaksi');
             $table->smallInteger('status_pembayaran');
-            $table->text('url');
+            $table->text('url')->nullable();
             $table->timestamps();
             $table->foreign('user_id')->references('id')->on('users');
         });

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Yajra\DataTables\DataTables;
 
 class CustomController extends Controller
 {
@@ -102,9 +103,23 @@ class CustomController extends Controller
         ], $status);
     }
 
+    public function jsonFailedResponse($msg = '') {
+        return response()->json([
+            'status' => 500,
+            'message' => 'Terjadi Kesalahan '.$msg,
+            'payload' => null
+        ], 500);
+    }
+
     public function uploadImage($field, $targetName = '', $disk = 'upload')
     {
         $file = $this->request->file($field);
         return Storage::disk($disk)->put($targetName, File::get($file));
     }
+
+    public function basicDataTables($object)
+    {
+        return DataTables::of($object)->addIndexColumn()->make(true);
+    }
+
 }

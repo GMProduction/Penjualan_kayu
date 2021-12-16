@@ -57,10 +57,12 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('/delete', [\App\Http\Controllers\BarangController::class, 'hapus']);
     });
 
-});
+    Route::group(['prefix' => 'transaksi'], function () {
+        Route::get( '/', [\App\Http\Controllers\TransaksiController::class, 'index']);
+        Route::get( '/list', [\App\Http\Controllers\TransaksiController::class, 'getList']);
+        Route::get( '/detail/{id}', [\App\Http\Controllers\TransaksiController::class, 'getDetail']);
+    });
 
-Route::get('/admin/transaksi', function () {
-    return view('admin.transaksi');
 });
 
 Route::get('/admin/laporantransaksi', function () {
