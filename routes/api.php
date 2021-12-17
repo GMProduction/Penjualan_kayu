@@ -29,5 +29,13 @@ Route::group(['prefix' => 'barang', 'middleware' => 'auth:api'], function () {
 
 Route::group(['prefix' => 'keranjang', 'middleware' => 'auth:api'], function () {
     Route::match(['get', 'post'], '/', [\App\Http\Controllers\Api\KeranjangController::class, 'index']);
-    Route::post( '/checkout', [\App\Http\Controllers\Api\KeranjangController::class, 'checkout']);
+    Route::post('/checkout', [\App\Http\Controllers\Api\KeranjangController::class, 'checkout']);
+    Route::post('/delete/{id}', [\App\Http\Controllers\Api\KeranjangController::class, 'delete']);
 });
+
+Route::group(['prefix' => 'transaksi', 'middleware' => 'auth:api'], function () {
+    Route::get('/', [\App\Http\Controllers\Api\TransaksiController::class, 'index']);
+    Route::match(['get', 'post'], '/{id}', [\App\Http\Controllers\Api\TransaksiController::class, 'detail']);
+});
+
+

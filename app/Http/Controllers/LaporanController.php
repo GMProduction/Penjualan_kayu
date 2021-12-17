@@ -2,12 +2,41 @@
 
 namespace App\Http\Controllers;
 
+use App\Helper\CustomController;
 use App\Http\Controllers\Controller;
+use App\Models\Transaksi;
 use Illuminate\Http\Request;
 
-class LaporanController extends Controller
+class LaporanController extends CustomController
 {
-  
+
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
+    public function index()
+    {
+        return view('admin.laporantransaksi');
+    }
+
+    public function getLaporanTransaksi()
+    {
+        try {
+            $status = $this->field('status');
+            $start = $this->field('start');
+            $end = $this->field('end');
+            $data = Transaksi::with(['user', 'keranjang.barang'])
+                ->whereBetween('tanggal', [$start, $end]);
+            if ($status !== "") {
+                $data->where('status_transaksi', '=', $status);
+            }
+            $result = $data->get();
+            return $this->basicDataTables($data);
+        } catch (\Exception $e) {
+            return $this->basicDataTables([]);
+        }
+    }
 
     public function cetakLaporanTransaksi()
     {
@@ -19,8 +48,8 @@ class LaporanController extends Controller
 
     public function dataTransaksi()
     {
-        
-        $data   = [
+
+        $data = [
             'data' => "data",
             'start' => "2012-01-01",
             'end' => "2012-01-01",
@@ -39,8 +68,8 @@ class LaporanController extends Controller
 
     public function dataPemasukan()
     {
-        
-        $data   = [
+
+        $data = [
             'data' => "data",
             'start' => "2012-01-01",
             'end' => "2012-01-01",

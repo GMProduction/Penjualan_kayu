@@ -58,9 +58,14 @@ Route::group(['prefix' => 'admin'], function () {
     });
 
     Route::group(['prefix' => 'transaksi'], function () {
-        Route::get( '/', [\App\Http\Controllers\TransaksiController::class, 'index']);
-        Route::get( '/list', [\App\Http\Controllers\TransaksiController::class, 'getList']);
-        Route::get( '/detail/{id}', [\App\Http\Controllers\TransaksiController::class, 'getDetail']);
+        Route::get('/', [\App\Http\Controllers\TransaksiController::class, 'index']);
+        Route::get('/list', [\App\Http\Controllers\TransaksiController::class, 'getList']);
+        Route::match(['get', 'post'], '/detail/{id}', [\App\Http\Controllers\TransaksiController::class, 'getDetail']);
+    });
+
+    Route::group(['prefix' => 'laporantransaksi'], function () {
+        Route::get('/', [\App\Http\Controllers\LaporanController::class, 'index']);
+        Route::get('/list-laporan', [\App\Http\Controllers\LaporanController::class, 'getLaporanTransaksi']);
     });
 
 });

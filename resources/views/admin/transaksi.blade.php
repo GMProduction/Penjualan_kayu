@@ -143,9 +143,8 @@
                             <div class="col-4 border rounded px-3">
                                 <div class="mb-3">
                                     <a for="dBuktiTransfer" class="d-block">Bukti Transfer</a>
-                                    <a id="dBuktiTransfer" style="cursor: pointer"
-                                       href=""
-                                       target="_blank">
+                                    <a id="dBuktiTransfer" class="link-bukti" style="cursor: pointer"
+                                       href="#">
                                         <img src=""
                                              style="width: 100px; height: 50px; object-fit: cover"/>
                                     </a>
@@ -154,10 +153,12 @@
                                 <div class="mb-3 d-none" id="btnKonfirmasi">
                                     <label for="kategori" class="form-label">Konfirmasi Pembayaran</label>
                                     <div class="d-flex">
-                                        <button type="submit" class="btn btn-sm btn-success me-2"
-                                                onclick="saveKonfirmasi(2)">Terima
+                                        <button type="button" class="btn btn-sm btn-success me-2 btn-confirm"
+                                                data-status="9"
+                                                data-type="bayar"
+                                                >Terima
                                         </button>
-                                        <button type="submit" class="btn btn-sm btn-danger" onclick="saveKonfirmasi(0)">
+                                        <button type="button" class="btn btn-sm btn-danger btn-confirm" data-status="6" data-type="bayar">
                                             Tolak
                                         </button>
                                     </div>
@@ -166,7 +167,11 @@
                                 <div>
                                     <p>Action</p>
                                     <a class="btn btn-sm btn-primary" id="dChat" target="_blank">chat</a>
-                                    <a class="btn btn-sm btn-warning d-none" id="btnKirim" onclick="saveKonfirmasi(3)">Kirim
+                                    <a class="btn btn-sm btn-warning d-none btn-confirm"
+                                       data-status="3"
+                                       data-type="pesanan"
+                                       id="btn-kirim"
+                                    >Kirim
                                         Barang</a>
                                 </div>
 
@@ -188,7 +193,7 @@
                                         <th>Gambar</th>
                                         <th>Produk</th>
                                         <th>Qty</th>
-                                        <th>Keterangan</th>
+                                        <th>Harga</th>
                                         <th>Total Harga</th>
                                     </tr>
                                     </thead>
@@ -290,8 +295,20 @@
         });
         var idPesanan;
 
+        function createTableKeranjang(data, k) {
+            return '<tr>' +
+                '<td>' + (k + 1) + '</td>' +
+                '<td><img src="' + data['barang']['gambar'] + '" height="60" width="60" alt="Gambar Produk"></td>' +
+                '<td>' + data['barang']['nama'] + '</td>' +
+                '<td>' + data['qty'] + '</td>' +
+                '<td>' + nominalFormat(data['harga']) + '</td>' +
+                '<td>' + nominalFormat(data['sub_total']) + '</td>' +
+                '</tr>';
+        }
+
         function setDetail(data) {
             const {
+                id,
                 user,
                 tanggal,
                 no_transaksi,
@@ -302,20 +319,109 @@
                 alamat,
                 status_transaksi,
                 status_pembayaran,
-                url, bank, estimasi} = data;
+                url, bank, estimasi, keranjang
+            } = data;
             $('#dnotransaksi').html(no_transaksi);
             $('#dtanggalPesanan').html(tanggal);
             $('#dNamaPelanggan').html(user['nama']);
             $('#dAlamatPengiriman').html(alamat);
+            $('#dExpedisi').html(ekspedisi);
+            $('#dEstimasi').html(estimasi);
+            $('#dBiaya').html(nominalFormat(sub_total));
+            $('#dOngkir').html(nominalFormat(ongkir));
+            $('#dTotal').html(nominalFormat(total));
+            $('.btn-confirm').attr('data-id', id);
+            let el = $('#tabelDetail');
+            el.empty();
+            if (keranjang.length > 0) {
+                $.each(keranjang, function (k, v) {
+                    el.append(createTableKeranjang(v, k));
+                })
+            } else {
+                el.append('<tr>' +
+                    '<td colspan="6" class="text-center">Tidak Ada Keranjang</td>' +
+                    '</tr>');
+            }
+            let elBukti = $('#dBuktiTransfer');
+            elBukti.empty();
+            if (url !== null) {
+                elBukti.append('<img src="' + url + '" height="150" width="150" alt="Gambar Bukti"/>');
+                $('.link-bukti').on('click', function (e) {
+                    e.preventDefault();
+                    window.open(url, '_blank');
+                })
+            } else {
+                elBukti.append('<p class="fw-bold">Belum Ada Bukti Pembayaran</p>');
+                $('.link-bukti').on('click', function (e) {
+                    e.preventDefault();
+                })
+            }
+
+            if(status_transaksi === 1) {
+                $('#btnKonfirmasi').removeClass('d-none');
+                $('.btn-confirm').on('click', function () {
+                    let status = this.dataset.status;
+                    let type = this.dataset.type;
+                    let id = this.dataset.id;
+                    confirm(id, status, type)
+                })
+            } else if(status_transaksi === 3) {
+                $('#btnKonfirmasi').addClass('d-none');
+                $('#btn-kirim').removeClass('d-none');
+                $('#btn-kirim').attr('data-status', 4);
+                $('#btn-kirim').html('Selesai');
+                $('.btn-confirm').on('click', function () {
+                    let status = this.dataset.status;
+                    let type = this.dataset.type;
+                    let id = this.dataset.id;
+                    confirm(id, status, type)
+                })
+
+            } else if(status_transaksi === 2) {
+                $('#btnKonfirmasi').addClass('d-none');
+                if(status_pembayaran === 9) {
+                    $('#btn-kirim').removeClass('d-none');
+
+                    $('.btn-confirm').on('click', function () {
+                        let status = this.dataset.status;
+                        let type = this.dataset.type;
+                        let id = this.dataset.id;
+                        confirm(id, status, type)
+                    })
+                }
+            } else {
+                $('#btnKonfirmasi').addClass('d-none');
+            }
         }
+
         async function detail(id) {
             try {
                 let response = await $.get('/admin/transaksi/detail/' + id);
                 console.log(response)
-                if(response['status'] === 200) {
+                if (response['status'] === 200) {
                     setDetail(response['payload']);
                     $('#detail1').modal('show');
-                }else {
+                } else {
+                    alert(response['message']);
+                }
+            } catch (e) {
+                console.log(e);
+                alert('Terjadi Kesalahan')
+            }
+        }
+
+        async function confirm(id, status, type) {
+            try {
+                let response = await $.post('/admin/transaksi/detail/' + id, {
+                    _token: '{{ csrf_token() }}',
+                    status: status,
+                    type: type
+                });
+                console.log(response)
+                if (response['status'] === 200) {
+                    reload();
+                    $('#detail1').modal('hide');
+                } else {
                     alert(response['message']);
                 }
             } catch (e) {

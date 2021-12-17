@@ -19,7 +19,8 @@ class Transaksi extends Model
         'alamat',
         'status_transaksi',
         'status_pembayaran',
-        'url'
+        'url',
+        'estimasi'
     ];
 
     public function user()

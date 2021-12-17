@@ -64,38 +64,50 @@ class KeranjangController extends CustomController
         }
     }
 
+    public function delete($id)
+    {
+        try {
+            Keranjang::destroy($id);
+            return $this->jsonResponse('success', 200);
+        } catch (\Exception $e) {
+            return $this->jsonFailedResponse($e->getMessage());
+        }
+    }
+
     public function checkout()
     {
         try {
             $user = Auth::id();
             $ongkir = $this->postField('ongkir') !== null ? $this->postField('ongkir') : 0;
-            DB::transaction(function () use ($user, $ongkir) {
-                $keranjang = Keranjang::with(['barang'])
-                    ->whereNull('transaksi_id')
-                    ->get();
+            DB::beginTransaction();
+            $keranjang = Keranjang::with(['barang'])
+                ->whereNull('transaksi_id')
+                ->get();
 
-                $sub_total = $keranjang->sum('sub_total');
+            $sub_total = $keranjang->sum('sub_total');
 
-                $transaksi = Transaksi::create([
-                    'user_id' => $user,
-                    'tanggal' => new \DateTime(),
-                    'no_transaksi' => 'TR-' . strtotime('now'),
-                    'sub_total' => $sub_total,
-                    'ongkir' => $ongkir,
-                    'total' => ($sub_total + $ongkir),
-                    'alamat' => $this->postField('alamat'),
-                    'ekspedisi' => $this->postField('ekspedisi'),
-                    'status_transaksi' => 0,
-                    'status_pembayaran' => 0,
-                    'url' => null
-                ]);
-                foreach ($keranjang as $v) {
-                    $v->transaksi_id = $transaksi->id;
-                    $v->save();
-                }
-            });
-            return $this->jsonResponse('success', 200);
+            $transaksi = Transaksi::create([
+                'user_id' => $user,
+                'tanggal' => new \DateTime(),
+                'no_transaksi' => 'TR-' . strtotime('now'),
+                'sub_total' => $sub_total,
+                'ongkir' => $ongkir,
+                'total' => ($sub_total + $ongkir),
+                'alamat' => $this->postField('alamat'),
+                'ekspedisi' => $this->postField('ekspedisi'),
+                'status_transaksi' => 0,
+                'status_pembayaran' => 0,
+                'url' => null,
+                'estimasi' => $this->postField('estimasi') !== null ? $this->postField('estimasi') : null
+            ]);
+            foreach ($keranjang as $v) {
+                $v->transaksi_id = $transaksi->id;
+                $v->save();
+            }
+            DB::commit();
+            return $this->jsonResponse('success', 200, ['transaksi_id' => $transaksi->id]);
         } catch (\Exception $e) {
+            DB::rollback();
             return $this->jsonFailedResponse($e->getMessage());
         }
     }
