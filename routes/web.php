@@ -35,10 +35,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-Route::get('/admin', function () {
-    return view('admin.dashboard');
-});
-
 Route::group(['prefix' => 'admin'], function () {
 
     Route::get('/', function () {

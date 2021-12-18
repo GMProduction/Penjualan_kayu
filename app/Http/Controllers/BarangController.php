@@ -53,7 +53,7 @@ class BarangController extends CustomController
         ];
         if ($gambar = $this->request->file('foto-edit')) {
             $ext = $gambar->getClientOriginalExtension();
-            $photoTarget = uniqid($this->postField('nama') . '-') . '.' . $ext;
+            $photoTarget = uniqid('image-') . '.' . $ext;
             $data['gambar'] = '/gambar/' . $photoTarget;
             $this->uploadImage('foto-edit', $photoTarget, 'gambar');
         }
