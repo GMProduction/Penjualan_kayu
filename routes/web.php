@@ -66,13 +66,17 @@ Route::group(['prefix' => 'admin'], function () {
     Route::group(['prefix' => 'laporantransaksi'], function () {
         Route::get('/', [\App\Http\Controllers\LaporanController::class, 'index']);
         Route::get('/list-laporan', [\App\Http\Controllers\LaporanController::class, 'getLaporanTransaksi']);
+        Route::get('/cetak', [\App\Http\Controllers\LaporanController::class, 'cetakLaporanTransaksi']);
+    });
+
+    Route::group(['prefix' => 'laporanpemasukan'], function () {
+        Route::get('/', [\App\Http\Controllers\LaporanController::class, 'indexPemasukan']);
+        Route::get('/list-laporan', [\App\Http\Controllers\LaporanController::class, 'getLaporanPemasukan']);
+        Route::get('/cetak', [\App\Http\Controllers\LaporanController::class, 'cetakLaporanPemasukan']);
     });
 
 });
 
-Route::get('/admin/laporantransaksi', function () {
-    return view('admin.laporantransaksi');
-});
 
 Route::get('/admin/laporanpemasukan', function () {
     return view('admin.laporanpemasukan');
@@ -81,8 +85,7 @@ Route::get('/admin/laporanpemasukan', function () {
 Route::prefix('laporantransaksi')->group(
     function () {
         Route::get('/', [\App\Http\Controllers\Admin\TransaksiController::class, 'laporanTransaksi']);
-        Route::get('/cetak', [\App\Http\Controllers\Admin\TransaksiController::class, 'cetak']);
-
+        Route::get('/cetak', [\App\Http\Controllers\Admin\TransaksiController::class, 'cetakLaporanTransaksi']);
     }
 );
 

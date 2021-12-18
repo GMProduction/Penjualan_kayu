@@ -1,7 +1,7 @@
 @extends('admin.base')
 
 @section('title')
-    Data Barang
+    Data Transaksi
 @endsection
 
 @section('css')
@@ -26,35 +26,35 @@
                 <h5 class="mb-3">Laporan</h5>
                 <form id="formTanggal">
                     <div class="d-flex align-items-end">
-                            <div>
-                                <label for="kategori" class="form-label">Status Transaksi</label>
-                                <div class="d-flex">
-                                    <select class="form-select me-2" aria-label="Default select example" id="selectStatus"
+                        <div>
+                            <label for="kategori" class="form-label">Status Transaksi</label>
+                            <div class="d-flex">
+                                <select class="form-select me-2" aria-label="Default select example" id="selectStatus"
                                         name="status">
-                                        <option selected value="">Semua</option>
-                                        <option value="0">Menunggu Pembayaran</option>
-                                        <option value="1">Menunggu Konfirmasi Admin</option>
-                                        <option value="2">Di Proses</option>
-                                        <option value="3">Di Kirim</option>
-                                        <option value="4">Selesai</option>
-                                    </select>
-                                </div>
+                                    <option selected value="">Semua</option>
+                                    <option value="0">Menunggu Pembayaran</option>
+                                    <option value="1">Menunggu Konfirmasi Admin</option>
+                                    <option value="2">Di Proses</option>
+                                    <option value="3">Di Kirim</option>
+                                    <option value="4">Selesai</option>
+                                </select>
                             </div>
+                        </div>
 
-                            <div class="me-2 ms-2">
-                                <label for="kategori" class="form-label">Periode</label>
-                                <div class="input-group input-daterange">
-                                    <input type="text" class="form-control me-2 txt-tgl" name="start" id="start"
-                                        style="background-color: white; line-height: 2.0;" readonly
-                                        value="{{ date('Y-m-d') }}" required>
-                                    <div class="input-group-addon">to</div>
-                                    <input type="text" class="form-control ms-2 txt-tgl" name="end" id="end"
-                                        style="background-color: white; line-height: 2.0;" readonly
-                                        value="{{ date('Y-m-d') }}" required>
-                                </div>
+                        <div class="me-2 ms-2">
+                            <label for="kategori" class="form-label">Periode</label>
+                            <div class="input-group input-daterange">
+                                <input type="text" class="form-control me-2 txt-tgl" name="start" id="start"
+                                       style="background-color: white; line-height: 2.0;" readonly
+                                       value="{{ date('d-m-Y') }}" required>
+                                <div class="input-group-addon">to</div>
+                                <input type="text" class="form-control ms-2 txt-tgl" name="end" id="end"
+                                       style="background-color: white; line-height: 2.0;" readonly
+                                       value="{{ date('d-m-Y') }}" required>
                             </div>
-                            <button type="button" class="btn btn-success mx-2" id="btn-cari">Cari</button>
-                            <a class="btn btn-warning" id="cetak" target="_blank" href="#!">Cetak</a>
+                        </div>
+                        <button type="button" class="btn btn-success mx-2" id="btn-cari">Cari</button>
+                        <a class="btn btn-warning" id="cetak" target="_blank" href="#">Cetak</a>
 
                     </div>
                 </form>
@@ -63,13 +63,13 @@
 
             <table class="table table-striped table-bordered w-100" id="myTable">
                 <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Nama Pelanggan</th>
-                        <th>Tanggal Pesan</th>
-                        <th>Total Harga</th>
-                        <th>Status</th>
-                    </tr>
+                <tr>
+                    <th>#</th>
+                    <th>Nama Pelanggan</th>
+                    <th>Tanggal Pesan</th>
+                    <th>Total Harga</th>
+                    <th>Status</th>
+                </tr>
                 </thead>
                 <tbody></tbody>
 
@@ -86,19 +86,29 @@
     <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/dt-1.11.3/datatables.min.js"></script>
     <script type="text/javascript" src="{{ asset('/js/myStyle.js') }}"></script>
     <script>
-        $('.input-daterange input').each(function() {
+        $('.input-daterange input').each(function () {
             $(this).datepicker({
                 format: "dd-mm-yyyy"
             });
         });
 
         var table;
+
         function reload() {
             table.ajax.reload();
         }
+
         $(document).ready(function () {
             $('#btn-cari').on('click', function () {
+                reload()
+            });
 
+            $('#cetak').on('click', function (e) {
+                e.preventDefault();
+                let start = $('#start').val();
+                let end = $('#end').val();
+                let status = $('#selectStatus').val();
+                window.open('/admin/laporantransaksi/cetak?start=' + start + '&end=' + end + '&status=' + status, '_blank');
             });
             console.log($('#start').val());
             table = $('#myTable').DataTable({

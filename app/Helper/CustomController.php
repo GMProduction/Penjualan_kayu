@@ -122,4 +122,11 @@ class CustomController extends Controller
         return DataTables::of($object)->addIndexColumn()->make(true);
     }
 
+    public function convertToPdf($viewRender, $data = [])
+    {
+        $html = view($viewRender)->with($data);
+        $pdf = \App::make('dompdf.wrapper');
+        $pdf->loadHTML($html);
+        return $pdf->stream();
+    }
 }
