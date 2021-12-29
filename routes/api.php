@@ -14,6 +14,28 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+//Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//    return $request->user();
+//});
+
+Route::group(['prefix' => 'auth'], function () {
+    Route::post('login', [\App\Http\Controllers\Api\AuthController::class, 'login']);
+    Route::post('register', [\App\Http\Controllers\Api\AuthController::class, 'register']);
 });
+
+Route::group(['prefix' => 'barang', 'middleware' => 'auth:api'], function () {
+    Route::get('/', [\App\Http\Controllers\Api\BarangController::class, 'getList']);
+});
+
+Route::group(['prefix' => 'keranjang', 'middleware' => 'auth:api'], function () {
+    Route::match(['get', 'post'], '/', [\App\Http\Controllers\Api\KeranjangController::class, 'index']);
+    Route::post('/checkout', [\App\Http\Controllers\Api\KeranjangController::class, 'checkout']);
+    Route::post('/delete/{id}', [\App\Http\Controllers\Api\KeranjangController::class, 'delete']);
+});
+
+Route::group(['prefix' => 'transaksi', 'middleware' => 'auth:api'], function () {
+    Route::get('/', [\App\Http\Controllers\Api\TransaksiController::class, 'index']);
+    Route::match(['get', 'post'], '/{id}', [\App\Http\Controllers\Api\TransaksiController::class, 'detail']);
+});
+
+

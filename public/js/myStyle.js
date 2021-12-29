@@ -79,3 +79,8 @@ $(document).ready(function(){
         $input.val(qty);
     });
   })();
+
+
+function nominalFormat(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}

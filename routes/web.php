@@ -34,53 +34,64 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('admin.dashboard');
+
+Route::group(['prefix' => 'admin'], function () {
+
+    Route::get('/', function () {
+        return view('admin.dashboard');
+    });
+
+    Route::group(['prefix' => 'admin'], function () {
+        Route::match(['post', 'get'], '/', [\App\Http\Controllers\AdminController::class, 'index']);
+        Route::post('/patch', [\App\Http\Controllers\AdminController::class, 'patch']);
+        Route::post('/delete', [\App\Http\Controllers\AdminController::class, 'hapus']);
+    });
+
+    Route::group(['prefix' => 'barang'], function () {
+        Route::match(['post', 'get'], '/', [\App\Http\Controllers\BarangController::class, 'index']);
+        Route::post('/patch', [\App\Http\Controllers\BarangController::class, 'patch']);
+        Route::post('/delete', [\App\Http\Controllers\BarangController::class, 'hapus']);
+    });
+
+    Route::group(['prefix' => 'transaksi'], function () {
+        Route::get('/', [\App\Http\Controllers\TransaksiController::class, 'index']);
+        Route::get('/list', [\App\Http\Controllers\TransaksiController::class, 'getList']);
+        Route::match(['get', 'post'], '/detail/{id}', [\App\Http\Controllers\TransaksiController::class, 'getDetail']);
+    });
+
+    Route::group(['prefix' => 'laporantransaksi'], function () {
+        Route::get('/', [\App\Http\Controllers\LaporanController::class, 'index']);
+        Route::get('/list-laporan', [\App\Http\Controllers\LaporanController::class, 'getLaporanTransaksi']);
+        Route::get('/cetak', [\App\Http\Controllers\LaporanController::class, 'cetakLaporanTransaksi']);
+    });
+
+    Route::group(['prefix' => 'laporanpemasukan'], function () {
+        Route::get('/', [\App\Http\Controllers\LaporanController::class, 'indexPemasukan']);
+        Route::get('/list-laporan', [\App\Http\Controllers\LaporanController::class, 'getLaporanPemasukan']);
+        Route::get('/cetak', [\App\Http\Controllers\LaporanController::class, 'cetakLaporanPemasukan']);
+    });
+
 });
 
 
-Route::get('/admin', function () {
-    return view('admin.dashboard');
-});
 
-Route::get('/admin/admin', function () {
-    return view('admin.admin');
-});
+//Route::prefix('laporantransaksi')->group(
+//    function () {
+//        Route::get('/', [\App\Http\Controllers\Admin\TransaksiController::class, 'laporanTransaksi']);
+//        Route::get('/cetak', [\App\Http\Controllers\Admin\TransaksiController::class, 'cetakLaporanTransaksi']);
+//    }
+//);
+//
+//Route::prefix('laporanpemasukan')->group(
+//    function () {
+//        Route::get('/', [\App\Http\Controllers\Admin\PemasukanController::class, 'index']);
+//        Route::get('/cetak', [\App\Http\Controllers\Admin\PemasukanController::class, 'cetak']);
+//    }
+//);
+//
+//Route::get('a/dmin/laporantransaksi/cetak', [LaporanController::class, 'cetakLaporanTransaksi']);
+//Route::get('/admin/laporanpemasukan/cetak', [LaporanController::class, 'cetakLaporanPemasukan']);
 
-Route::get('/admin/barang', function () {
-    return view('admin.barang');
-});
-
-Route::get('/admin/transaksi', function () {
-    return view('admin.transaksi');
-});
-
-Route::get('/admin/laporantransaksi', function () {
-    return view('admin.laporantransaksi');
-});
-
-Route::get('/admin/laporanpemasukan', function () {
-    return view('admin.laporanpemasukan');
-});
-
-Route::prefix('laporantransaksi')->group(
-    function () {
-        Route::get('/', [\App\Http\Controllers\Admin\TransaksiController::class, 'laporanTransaksi']);
-        Route::get('/cetak', [\App\Http\Controllers\Admin\TransaksiController::class, 'cetak']);
-
-    }
-);
-
-Route::prefix('laporanpemasukan')->group(
-    function () {
-        Route::get('/', [\App\Http\Controllers\Admin\PemasukanController::class, 'index']);
-        Route::get('/cetak', [\App\Http\Controllers\Admin\PemasukanController::class, 'cetak']);
-    }
-);
-
-Route::get('a/dmin/laporantransaksi/cetak', [LaporanController::class, 'cetakLaporanTransaksi']);
-Route::get('/admin/laporanpemasukan/cetak', [LaporanController::class, 'cetakLaporanPemasukan']);
-
-Route::post('/login', [AuthController::class, 'login']);
-Route::get('/logout', [AuthController::class, 'logout']);
+Route::match(['get', 'post'], '/', [AuthController::class, 'login'])->middleware('guest');
+Route::get('/logout', [AuthController::class, 'logout'])->middleware('web');
 Route::post('/register-member', [AuthController::class, 'registerMember']);

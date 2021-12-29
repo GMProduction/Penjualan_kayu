@@ -52,7 +52,18 @@ return [
             'endpoint' => env('AWS_ENDPOINT'),
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
         ],
-
+        'gambar' => [
+            'driver' => 'local',
+            'root' => public_path() . '/gambar',
+            'url' => env('APP_URL') . '/storage',
+            'visibility' => 'public',
+        ],
+        'bukti' => [
+            'driver' => 'local',
+            'root' => public_path() . '/bukti',
+            'url' => env('APP_URL') . '/storage',
+            'visibility' => 'public',
+        ],
     ],
 
     /*
