@@ -23,8 +23,9 @@ Route::group(['prefix' => 'auth'], function () {
     Route::post('register', [\App\Http\Controllers\Api\AuthController::class, 'register']);
 });
 
-Route::group(['prefix' => 'barang', 'middleware' => 'auth:api'], function () {
+Route::group(['prefix' => 'barang'], function () {
     Route::get('/', [\App\Http\Controllers\Api\BarangController::class, 'getList']);
+    Route::get('/{id}', [\App\Http\Controllers\Api\BarangController::class, 'detail']);
 });
 
 Route::group(['prefix' => 'keranjang', 'middleware' => 'auth:api'], function () {
@@ -36,6 +37,10 @@ Route::group(['prefix' => 'keranjang', 'middleware' => 'auth:api'], function () 
 Route::group(['prefix' => 'transaksi', 'middleware' => 'auth:api'], function () {
     Route::get('/', [\App\Http\Controllers\Api\TransaksiController::class, 'index']);
     Route::match(['get', 'post'], '/{id}', [\App\Http\Controllers\Api\TransaksiController::class, 'detail']);
+});
+
+Route::group(['middleware' => 'auth:api', 'prefix' => 'profil'], function () {
+    Route::match(['get', 'post'],'/', [\App\Http\Controllers\Api\ProfileController::class, 'index']);
 });
 
 
