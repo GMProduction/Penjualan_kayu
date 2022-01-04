@@ -78,12 +78,13 @@ class KeranjangController extends CustomController
     {
         try {
             $user = Auth::id();
-            $ongkir = $this->postField('ongkir') !== null ? $this->postField('ongkir') : 0;
+            $ongkir = isset($this->postJsonField()->ongkir)  ? $this->postJsonField()->ongkir : 0;
+            $id = isset($this->postJsonField()->id)  ? $this->postJsonField()->id : [];
             DB::beginTransaction();
             $keranjang = Keranjang::with(['barang'])
                 ->whereNull('transaksi_id')
+                ->whereIn('id', $id)
                 ->get();
-
             $sub_total = $keranjang->sum('sub_total');
 
             $transaksi = Transaksi::create([
@@ -93,12 +94,12 @@ class KeranjangController extends CustomController
                 'sub_total' => $sub_total,
                 'ongkir' => $ongkir,
                 'total' => ($sub_total + $ongkir),
-                'alamat' => $this->postField('alamat'),
-                'ekspedisi' => $this->postField('ekspedisi'),
+                'alamat' => isset($this->postJsonField()->alamat)  ? $this->postJsonField()->alamat : '',
+                'ekspedisi' => isset($this->postJsonField()->ekspedisi)  ? $this->postJsonField()->ekspedisi : '',
                 'status_transaksi' => 0,
                 'status_pembayaran' => 0,
                 'url' => null,
-                'estimasi' => $this->postField('estimasi') !== null ? $this->postField('estimasi') : null
+                'estimasi' => isset($this->postJsonField()->estimasi) ? $this->postJsonField()->estimasi : null
             ]);
             foreach ($keranjang as $v) {
                 $v->transaksi_id = $transaksi->id;
