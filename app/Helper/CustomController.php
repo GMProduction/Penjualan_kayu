@@ -94,6 +94,10 @@ class CustomController extends Controller
         return $this->request->query->get($key);
     }
 
+    public function postJsonField() {
+        return json_decode($this->request->getContent());
+    }
+
     public function jsonResponse($msg = '', $status = 200, $data = null)
     {
         return response()->json([
