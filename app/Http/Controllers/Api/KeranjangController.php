@@ -54,7 +54,8 @@ class KeranjangController extends CustomController
                 }
                 return $this->jsonResponse('success', 200);
             }
-            $data = Keranjang::with(['barang:id,nama,harga,satuan,gambar'])
+
+            $data = Keranjang::select("*",  DB::raw('(qty * harga) as sub'))->with(['barang:id,nama,harga,satuan,gambar'])
                 ->where('user_id', '=', $user)
                 ->whereNull('transaksi_id')
                 ->get();
