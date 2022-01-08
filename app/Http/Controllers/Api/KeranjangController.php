@@ -41,7 +41,8 @@ class KeranjangController extends CustomController
                 if ($isExist) {
                     $qtyExist = $isExist->qty;
                     $isExist->update([
-                        'qty' => $qtyExist + $qty
+                        'qty' => $qtyExist + $qty,
+                        'sub_total' => $qty * $isExist->harga,
                     ]);
                 } else {
                     Keranjang::create([
@@ -49,7 +50,8 @@ class KeranjangController extends CustomController
                         'transaksi_id' => null,
                         'barang_id' => $barang->id,
                         'qty' => $qty,
-                        'harga' => $barang->harga
+                        'harga' => $barang->harga,
+                        'sub_total' => $qty * $barang->harga,
                     ]);
                 }
                 return $this->jsonResponse('success', 200);
