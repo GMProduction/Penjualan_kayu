@@ -40,13 +40,13 @@
     <div class="side-navbar active-nav d-flex justify-content-between  flex-wrap flex-column" id="sidebar">
         <ul class="nav flex-column text-white w-100 h-100">
             <a href="#" class="nav-link h5 text-white my-2">
-                Hi, Joko (Admin)
+                Hi, {{ auth()->user()->username }}
             </a>
 
             <a href="/admin/admin">
                 <li href="#" class="nav-link t-white">
                     <i class='bx bx-group'></i>
-                    <span class="mx-2">Master Admin</span>
+                    <span class="mx-2">Master Customer</span>
                 </li>
             </a>
 
