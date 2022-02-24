@@ -14,7 +14,7 @@
     <section class="m-2">
         <div class="table-container">
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <h5>Data User</h5>
+                <h5>Data Customer</h5>
                 <button type="button" class="btn btn-primary btn-sm ms-auto" data-bs-toggle="modal"
                         data-bs-target="#tambahsiswa">Tambah Data
                 </button>

@@ -30,7 +30,7 @@ class AdminController extends CustomController
             User::create($data);
             return redirect()->back()->with('success');
         }
-        $data = User::where('roles', '=', 'admin')->get();
+        $data = User::where('roles', '=', 'member')->get();
         return view('admin.admin')->with(['data' => $data]);
     }
 
