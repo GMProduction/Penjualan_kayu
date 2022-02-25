@@ -54,13 +54,13 @@ return [
         ],
         'gambar' => [
             'driver' => 'local',
-            'root' => 'home/u7082880/public_html/hajar//gambar',
+            'root' => 'home/u7082880/public_html/hajar/gambar',
             'url' => env('APP_URL') . '/storage',
             'visibility' => 'public',
         ],
         'bukti' => [
             'driver' => 'local',
-            'root' => 'home/u7082880/public_html/hajar//bukti',
+            'root' => 'home/u7082880/public_html/hajar/bukti',
             'url' => env('APP_URL') . '/storage',
             'visibility' => 'public',
         ],
