@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             'nama' => 'admin',
             'alamat' => 'solo',
             'username' => 'admin',
+            'no_hp' => '0000',
             'password' => Hash::make('admin'),
             'roles' => 'admin',
         ]);
