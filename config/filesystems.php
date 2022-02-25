@@ -54,13 +54,13 @@ return [
         ],
         'gambar' => [
             'driver' => 'local',
-            'root' => public_path() . '/gambar',
+            'root' => 'home/u7082880/public_html/hajar//gambar',
             'url' => env('APP_URL') . '/storage',
             'visibility' => 'public',
         ],
         'bukti' => [
             'driver' => 'local',
-            'root' => public_path() . '/bukti',
+            'root' => 'home/u7082880/public_html/hajar//bukti',
             'url' => env('APP_URL') . '/storage',
             'visibility' => 'public',
         ],
